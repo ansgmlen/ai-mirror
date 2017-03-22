@@ -19,7 +19,7 @@ const speech = Speech({
 //1. turn on listening ->
 
 // Start recording and send the microphone input to the Speech API
-function startListen() {
+exports.startListen = function (req, res) {
 
     // Create a recognize stream : https://cloud.google.com/speech/docs/streaming-recognize
     const recognizeStream = speech.createRecognizeStream({
@@ -46,6 +46,8 @@ function startListen() {
                     }
                   }
 
+                  //res.end("Called");
+
                   //return getEntity({type : "Weather-Type"});
 
                 }).catch((err)=>{
@@ -53,7 +55,7 @@ function startListen() {
                 });
 
                 //stop and start again when process circle is done
-                stop();
+                exports.stopListen();
 
 
 /*
@@ -74,11 +76,11 @@ function startListen() {
                     getFile("Sorry, I don't understand");
                 }
 
-                stop();
+                exports.stopListen();
                 */
 
             }else{
-              console.log("empty");
+              console.log("silence");
             }
 
 
@@ -89,12 +91,14 @@ function startListen() {
         threshold: 0
     }).pipe(recognizeStream);
 }
-startListen();
+
 
 /* stop recording */
-function stop() {
+exports.stopListen = function(req, res) {
     record.stop();
+    res.end();
 }
+
 
 
 /**

@@ -36,7 +36,8 @@ app.use('/js', browserify('./client/scripts', {
 var speech = require('./speech');
 var weather = require('./weather');
 
-//app.get('/app/events', events.getEvents);
+app.get('/startListen', speech.startListen);
+app.get('/stopListen', speech.stopListen);
 
 
 /*
