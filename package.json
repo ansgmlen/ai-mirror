@@ -1,0 +1,48 @@
+{
+  "name": "my-project",
+  "version": "0.0.1",
+  "private": true,
+  "description": "My React Project",
+  "main": "server.js",
+  "author": "Jed Watson",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JedWatson/react-project-starter.git"
+  },
+  "dependencies": {
+    "@google-cloud/speech": "^0.7.0",
+    "babelify": "^6.0.1",
+    "browserify-middleware": "^7.1.0",
+    "classnames": "~1.2.0",
+    "express": "^4.12.3",
+    "google-tts-api": "0.0.1",
+    "less-middleware": "^2.0.1",
+    "moment": "^2.18.1",
+    "node-record-lpcm16": "^0.2.0",
+    "nunjucks": "^1.2.0",
+    "play-sound": "^1.1.1",
+    "q": "^1.4.1",
+    "react": "^15.4.1",
+    "react-datetime": "^2.8.8",
+    "react-dom": "^15.4.1",
+    "react-router": "^3.0.0",
+    "request": "^2.78.0",
+    "sweetalert2": "^6.4.4",
+    "underscore": "~1.8.3"
+  },
+  "scripts": {
+    "start": "node server",
+    "test": "echo \"no tests yet\" && exit 0",
+    "lint": "eslint ./; true"
+  },
+  "keywords": [
+    "demo"
+  ],
+  "devDependencies": {
+    "babel-eslint": "^2.0.2",
+    "eslint": "^0.18.0",
+    "eslint-plugin-react": "^2.0.2",
+    "nodemon": "^1.11.0"
+  }
+}
