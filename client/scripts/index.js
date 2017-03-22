@@ -49,11 +49,11 @@ ReactDOM.render((
     <Route path="/" component={App}>
 			<IndexRoute getComponent={ (nextState, cb) => {
 				// do asynchronous stuff to find the components
-			 cb(null, require('../routes/home/Home'))
+			 cb(null, require('../routes/home/home'))
 
 }} />
 		  <Route path="login" component={require('../routes/login/Login')}></Route>
-		  <Route path="home" component={require('../routes/home/Home')}></Route>
+		  <Route path="home" component={require('../routes/home/home')}></Route>
 		  <Route path="*" component={NoMatch}/>
     </Route>
   </Router>

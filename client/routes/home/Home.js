@@ -2,6 +2,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 var CONFIG = JSON.parse(localStorage.getItem('CONFIG'));
+var moment = require("moment");
+var homeService = require("../home/homeService");
 
 module.exports = React.createClass({
 	displayName: 'VIEW_Home',
