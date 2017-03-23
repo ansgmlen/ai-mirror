@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Link, browserHistory, IndexRoute } from 'react-router'
+var Defaults = require('../mixins/Defaults');
 
 var CONFIG = {
 	dev : {
@@ -23,18 +24,20 @@ var App = React.createClass({
 	render: function() {
 		return (
 			<div className="page-wrapper">
-				<div className="page-body">
+				<div className="page-body" style={{backgroundColor:Defaults.ui.color.black}}>
 				  {this.props.children}
-				</div>
-				<div className="page-footer">
-					<div className="page-container">
-						Copyright &copy; 2017 <a href="http://www.google.com/" target="_blank">AI Mirror</a> &middot;
-					</div>
 				</div>
 			</div>
 		);
 	}
 });
+/*
+<div className="page-footer" style={{backgroundColor:Defaults.ui.color.black}}>
+	<div className="page-container">
+		Copyright &copy; 2017 <a href="http://www.google.com/" target="_blank">AI Mirror</a> &middot;
+	</div>
+</div>
+*/
 
 const NoMatch = React.createClass({
 	render: function(){

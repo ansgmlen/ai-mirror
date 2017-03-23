@@ -38,6 +38,7 @@ var weather = require('./weather');
 
 app.get('/startListen', speech.startListen);
 app.get('/stopListen', speech.stopListen);
+app.get('/getWeather', weather.getWeather);
 
 
 /*
