@@ -16,8 +16,6 @@ const speech = Speech({
     keyFilename: 'public/key/smart-mirror-437114bd5f01.json' //'public/key/smart-mirror-3afaae1972f9.json'
 });
 
-//1. turn on listening ->
-
 // Start recording and send the microphone input to the Speech API
 exports.startListen = function (req, res) {
 
@@ -35,19 +33,28 @@ exports.startListen = function (req, res) {
 
                 getMessage({
                     message: data.results
-                }).then((res) => {
-                  console.log("getMessage: ",res);
+                }).then((response) => {
+                  console.log("getMessage: ",response);
 
-                  if(res.entities && res.entities.Intent){
-                    var val = res.entities.Intent[0].value;
-                    if(val == 'greeting'){
-                      //TODO: do greeting
-                      //make response audio file here and return obj(res) -> client needs to action according to obj
+                  try{
+
+                    if(res.entities && res.entities.Intent){
+                      var val = res.entities.Intent[0].value;
+                      if(val == 'greeting'){
+                        //TODO: do greeting
+                        //make response audio file here and return obj(res) -> client needs to action according to obj
+                      }
                     }
+
+                    //1. show me calendar?
+                    //2. display this week schedule
+
+                  }catch(caught){
+                    console.log(caught);
                   }
 
-                  //res.end("Called");
-
+                  res.send(response);
+                  exports.startListen();
                   //return getEntity({type : "Weather-Type"});
 
                 }).catch((err)=>{
@@ -95,8 +102,9 @@ exports.startListen = function (req, res) {
 
 /* stop recording */
 exports.stopListen = function(req, res) {
-    record.stop();
-    res.end();
+  console.log("stop listen");
+  record.stop();
+    //res.end();
 }
 
 
