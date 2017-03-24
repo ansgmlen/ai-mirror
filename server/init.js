@@ -35,11 +35,14 @@ app.use('/js', browserify('./client/scripts', {
 
 var speech = require('./speech');
 var weather = require('./weather');
+var news = require('./news');
+var calendar = require('./calendar');
 
 app.get('/startListen', speech.startListen);
 app.get('/stopListen', speech.stopListen);
 app.get('/getWeather', weather.getWeather);
-
+app.get('/getNews', news.getNews);
+app.get('./getSchedule', calendar.getSchedule);
 
 /*
 	set up any additional server routes (api endpoints, static pages, etc.)
