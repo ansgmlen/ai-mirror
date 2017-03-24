@@ -38,6 +38,10 @@ exports.startListen = function (req, res) {
 
                   try{
 
+                    if(response.entities && response.entities.calendar){
+                      //speak show calendar
+                    }
+                    /*
                     if(res.entities && res.entities.Intent){
                       var val = res.entities.Intent[0].value;
                       if(val == 'greeting'){
@@ -45,6 +49,7 @@ exports.startListen = function (req, res) {
                         //make response audio file here and return obj(res) -> client needs to action according to obj
                       }
                     }
+                    */
 
                     //1. show me calendar?
                     //2. display this week schedule

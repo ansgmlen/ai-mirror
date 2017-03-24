@@ -8,6 +8,9 @@ var answer = {
   weather : {
     val : "Ok"
   },
+  calendar : {
+    val : "Ok"
+  },
   none : {
     val : "Sorry I don't understand"
   }
