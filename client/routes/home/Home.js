@@ -34,6 +34,7 @@ module.exports = React.createClass({
 	componentDidMount: function() {
 		this.getWeather();
 		this.getNews();
+		this.getSchedule();
 	},
 	openView: function(_viewName) {
 		window.open(CONFIG.currentEnv.endpoint + _viewName, '_self', false); //open home
@@ -100,7 +101,7 @@ module.exports = React.createClass({
 
 		var command = this.state.currentCommand; //<-- this will change after getting speech data
 
-		command = "first news"//TODO : will replace
+		command = "show calendar"//TODO : will replace
 
 		if(command.indexOf("first") > -1 && command.indexOf("news") > -1){
 			this.state.selectedUrl = this.state.newsFeed[0].url;
@@ -112,6 +113,8 @@ module.exports = React.createClass({
 			this.state.selectedUrl = this.state.newsFeed[3].url;
 		}else if(command.indexOf("fifth") > -1 && command.indexOf("news") > -1){
 			this.state.selectedUrl = this.state.newsFeed[4].url;
+		}else if(command.indexOf("show") > -1 && command.indexOf("calendar") > -1){
+			this.state.selectedUrl = "https://calendar.google.com/calendar/embed?src=heedoo21c%40gmail.com&ctz=America/New_York";
 		}else{
 			//dont understand
 			this.closeModal();
@@ -124,11 +127,10 @@ module.exports = React.createClass({
 	getSchedule : function(){
 
 		var self = this;
-		//var now = new Date();
 
 		homeService.getSchedule().then((res)=>{
 			 self.setState({
-				 schedules : []
+				 schedules : res.items
 	    });
 		}, (err)=>{
 			console.log(err);
@@ -145,8 +147,8 @@ module.exports = React.createClass({
 
 	render () {
 
-		var isPopupOn = this.state.isShow;
 		var items = []; // row UI container
+		var schedules = []; // row UI container
 
 		this.state.newsFeed.map( (item, i) => {
 			if(i < 5){
@@ -156,6 +158,14 @@ module.exports = React.createClass({
 				  </tr>
 			    );
 			}
+		});
+
+		this.state.scheudlels.map( (schedule, x) => {
+			schedules.push(
+				<tr key={x} style={{color:Defaults.ui.color.white, fontSize:'13px'}}>
+					<td>{"∙ " + moment(schedule.updated).format('ll')} {schedule.summary}</td>
+				</tr>
+				);
 		});
 
 
@@ -192,8 +202,13 @@ module.exports = React.createClass({
 					</div>
 
 					<div style={{float:'right'}}>
-						<div style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.large}}>Today schedule</div>
-						<div style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.large}}>Baby shower for friend</div>
+						<div style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.large, textAlign:'right'}}>Today schedule</div>
+						<div style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.large, textAlign:'right'}}>Baby shower for friend</div>
+							<table>
+								<tbody>
+								  {schedules}
+							  </tbody>
+							</table>
 					</div>
 
 				</div>

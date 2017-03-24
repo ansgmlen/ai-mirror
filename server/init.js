@@ -42,7 +42,7 @@ app.get('/startListen', speech.startListen);
 app.get('/stopListen', speech.stopListen);
 app.get('/getWeather', weather.getWeather);
 app.get('/getNews', news.getNews);
-app.get('./getSchedule', calendar.getSchedule);
+app.get('/getSchedule', calendar.getSchedule);
 
 /*
 	set up any additional server routes (api endpoints, static pages, etc.)
