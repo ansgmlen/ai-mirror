@@ -6,7 +6,6 @@ var moment = require("moment");
 var homeService = require("../home/homeService");
 var Defaults = require('../../mixins/Defaults');
 var Clock =  require('../../../client/components/clock');
-
 import Popout from 'react-popout';
 
 
@@ -25,7 +24,7 @@ module.exports = React.createClass({
 			weatherDailySummary : '',
 			dailyWeather : [],
 			newsFeed : [],
-			scheudlels : [],
+			schedules : [],
 			isShow : false,
 			selectedUrl : '',
 			currentCommand : ''
@@ -148,7 +147,7 @@ module.exports = React.createClass({
 	render () {
 
 		var items = []; // row UI container
-		var schedules = []; // row UI container
+		var scheduleList = []; // row UI container
 
 		this.state.newsFeed.map( (item, i) => {
 			if(i < 5){
@@ -160,10 +159,10 @@ module.exports = React.createClass({
 			}
 		});
 
-		this.state.scheudlels.map( (schedule, x) => {
-			schedules.push(
+		this.state.schedules.map( (schedule, x) => {
+			scheduleList.push(
 				<tr key={x} style={{color:Defaults.ui.color.white, fontSize:'13px'}}>
-					<td>{"∙ " + moment(schedule.updated).format('ll')} {schedule.summary}</td>
+					<td>{"∙ " + moment(schedule.start.dateTime).format('ll')} {schedule.summary}</td>
 				</tr>
 				);
 		});
@@ -202,11 +201,10 @@ module.exports = React.createClass({
 					</div>
 
 					<div style={{float:'right'}}>
-						<div style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.large, textAlign:'right'}}>Today schedule</div>
-						<div style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.large, textAlign:'right'}}>Baby shower for friend</div>
-							<table>
+						<div style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.large, textAlign:'center'}}>My Schedule</div>
+							<table style={{marginTop:'10px'}}>
 								<tbody>
-								  {schedules}
+								  {scheduleList}
 							  </tbody>
 							</table>
 					</div>
