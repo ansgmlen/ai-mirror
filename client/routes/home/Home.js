@@ -75,7 +75,7 @@ module.exports = React.createClass({
 				weatherIcon : self.lookupIcon(res.currently.icon),
 				weatherCurrentSummary: res.currently.summary,
 				weatherDailySummary : res.daily.summary,
-				dailyWeather : res.currently.daily,
+				dailyWeather : res.daily.data,
 				day : moment(now).format('dddd'),
 				date : moment(now).format('ll'),
 				timer : 0
@@ -148,6 +148,7 @@ module.exports = React.createClass({
 
 		var items = []; // row UI container
 		var scheduleList = []; // row UI container
+		var dailyWeatherBox = [];
 
 		this.state.newsFeed.map( (item, i) => {
 			if(i < 5){
@@ -168,6 +169,21 @@ module.exports = React.createClass({
 		});
 
 
+		this.state.dailyWeather.map( (_daily, j) => {
+
+			dailyWeatherBox.push(
+				<div key={j} style={{float:'left', width:'35px', height:'80px'}}>
+					<div style={{color:Defaults.ui.color.white, fontSize:'12px', textAlign:"center"}}>{moment(_daily.time*1000).format("ddd")}</div>
+					<div><img style={{width:'20px', height:'20px', marginLeft:'5px'}} src={this.lookupIcon(_daily.icon)}></img></div>
+					<div style={{color:Defaults.ui.color.white, fontSize:'12px', align:'center', textAlign:"center"}}>
+						<spen>{Math.round(parseFloat(_daily.temperatureMax))} </spen> <spen style={{opacity:0.7}}>{Math.round(parseFloat(_daily.temperatureMin))} </spen>
+					</div>
+				</div>
+			);
+		});
+
+
+
 		return (
 			<div className="page-container">
 
@@ -184,6 +200,9 @@ module.exports = React.createClass({
 				<div style={{overflow:'hidden'}}>
 					<div style={{float:'left', width:'40%'}}>
 						<div style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.large, marginTop:'10px'}}>{this.state.weatherDailySummary} </div>
+						<div style={{overflow:'hidden', marginTop:'10px'}}>
+							{dailyWeatherBox}
+						</div>
 					</div>
 					<div style={{float:'right'}}>
 						<div style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.large, textAlign:'right'}}>{this.state.day}</div>
