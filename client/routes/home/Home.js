@@ -1,4 +1,3 @@
-//var React = require('react/addons');
 import React from 'react';
 import ReactDOM from 'react-dom';
 var CONFIG = JSON.parse(localStorage.getItem('CONFIG'));
@@ -8,6 +7,8 @@ var Defaults = require('../../mixins/Defaults');
 var Clock =  require('../../../client/components/clock');
 import Popout from 'react-popout';
 
+import io from 'socket.io-client';
+var socket = io('http://localhost:3000');
 
 module.exports = React.createClass({
 	displayName: 'VIEW_Home',
@@ -27,14 +28,22 @@ module.exports = React.createClass({
 			schedules : [],
 			isShow : false,
 			selectedUrl : '',
-			currentCommand : ''
+			currentCommand : 'a'
 		};
 	},
 	componentDidMount: function() {
+		var self = this;
 		this.getWeather();
 		this.getNews();
 		this.getSchedule();
+
+		socket.on('receiveCommand', function(data) {
+				console.log("command: ", data);
+				self.handleCommand(data);
+		});
+
 	},
+
 	openView: function(_viewName) {
 		window.open(CONFIG.currentEnv.endpoint + _viewName, '_self', false); //open home
 	},
@@ -96,7 +105,21 @@ module.exports = React.createClass({
 		});
 	},
 
-	getUrl :function(){
+	handleCommand: function(_data){
+
+		if(_data.type == "calendar" || _data.type == "news"){
+
+			this.getUrl(_data.url);
+
+		}else if(_data.type == "weather"){
+
+		}else{
+
+		}
+
+	},
+
+	getUrl :function(_url){
 
 		var command = this.state.currentCommand; //<-- this will change after getting speech data
 
@@ -199,7 +222,7 @@ module.exports = React.createClass({
 
 				<div style={{overflow:'hidden'}}>
 					<div style={{float:'left', width:'40%'}}>
-						<div style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.large, marginTop:'10px'}}>{this.state.weatherDailySummary} </div>
+						<div style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.large, marginTop:'10px'}}>{this.state.weatherCurrentSummary} </div>
 						<div style={{overflow:'hidden', marginTop:'10px'}}>
 							{dailyWeatherBox}
 						</div>

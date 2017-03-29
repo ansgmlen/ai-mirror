@@ -9,6 +9,7 @@ var nunjucks = require('nunjucks');
 var config = require('../client/config');
 var app = express(); // initialise express
 
+
 // use nunjucks to process view templates in express
 nunjucks.configure('server/templates/views', {
     express: app
@@ -56,11 +57,16 @@ app.get('*', function(req, res) {
 
 
 
+
 // start the server
 var server = app.listen(process.env.PORT || 3000, function() {
 	console.log('\nServer ready on port %d\n', server.address().port);
 });
+var io = require('socket.io')(server);
 
+io.on('connection', function(client){
+  speech.startSocket(client);
+});
 
 // //create a cron job to keep the server running
 // var CronJob = require("cron").CronJob;

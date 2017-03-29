@@ -16,6 +16,14 @@ const speech = Speech({
     keyFilename: 'public/key/smart-mirror-437114bd5f01.json' //'public/key/smart-mirror-3afaae1972f9.json'
 });
 
+var io = require('socket.io');
+var socketClient = {};
+exports.startSocket = function(client) {
+  console.log("start socket.io in speech.js");
+  socketClient = client;
+  exports.startListen();
+};
+
 // Start recording and send the microphone input to the Speech API
 exports.startListen = function (req, res) {
 
@@ -34,12 +42,22 @@ exports.startListen = function (req, res) {
                 getMessage({
                     message: data.results
                 }).then((response) => {
+
                   console.log("getMessage: ",response);
+
+                  var json = JSON.parse(response);
+
+
 
                   try{
 
-                    if(response.entities && response.entities.calendar){
+                    if(json.entities && json.entities.Intent){
+
+                    }
+
+                    if(json.entities && json.entities.calendar){
                       //speak show calendar
+                      socketClient.emit('receiveCommand', {type:'calendar', action:'openUrl', url : 'https://calendar.google.com/calendar/embed?src=heedoo21c%40gmail.com&ctz=America/New_York', text : "Sure here is your calendar" });
                     }
                     /*
                     if(res.entities && res.entities.Intent){
@@ -54,11 +72,11 @@ exports.startListen = function (req, res) {
                     //1. show me calendar?
                     //2. display this week schedule
 
-                  }catch(caught){
-                    console.log(caught);
+                  } catch(_error){
+                    console.log(_error);
                   }
 
-                  res.send(response);
+                  //res.send(response);
                   exports.startListen();
                   //return getEntity({type : "Weather-Type"});
 
