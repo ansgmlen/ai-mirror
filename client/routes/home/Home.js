@@ -121,10 +121,6 @@ module.exports = React.createClass({
 
 	getUrl :function(_url){
 
-		var command = this.state.currentCommand; //<-- this will change after getting speech data
-
-		command = "show calendar"//TODO : will replace
-
 		if(command.indexOf("first") > -1 && command.indexOf("news") > -1){
 			this.state.selectedUrl = this.state.newsFeed[0].url;
 		}else if(command.indexOf("second") > -1 && command.indexOf("news") > -1){
@@ -136,7 +132,7 @@ module.exports = React.createClass({
 		}else if(command.indexOf("fifth") > -1 && command.indexOf("news") > -1){
 			this.state.selectedUrl = this.state.newsFeed[4].url;
 		}else if(command.indexOf("show") > -1 && command.indexOf("calendar") > -1){
-			this.state.selectedUrl = "https://calendar.google.com/calendar/embed?src=heedoo21c%40gmail.com&ctz=America/New_York";
+			this.state.selectedUrl = _url;
 		}else{
 			//dont understand
 			this.closeModal();
