@@ -5,7 +5,7 @@ var moment = require("moment");
 var homeService = require("../home/homeService");
 var Defaults = require('../../mixins/Defaults');
 var Clock =  require('../../../client/components/clock');
-import Popout from 'react-popout';
+var Popup =  require('../../../client/components/popup');
 
 import io from 'socket.io-client';
 var socket = io('http://localhost:3000');
@@ -38,9 +38,23 @@ module.exports = React.createClass({
 		this.getSchedule();
 
 		socket.on('receiveCommand', function(data) {
-				console.log("command: ", data);
+				console.log("receiveCommand: ", data);
 				self.handleCommand(data);
 		});
+
+	},
+
+	handleCommand: function(_data){
+
+		if(_data.type == "calendar" || _data.type == "news"){
+			this.getUrl(_data);
+		}else if(_data.type == "weather"){
+
+		}else if(_data.type == "closeModal"){
+			this.closeModal();
+		}else{
+			this.closeModal();
+		}
 
 	},
 
@@ -105,41 +119,31 @@ module.exports = React.createClass({
 		});
 	},
 
-	handleCommand: function(_data){
+	getUrl :function(_params){
 
-		if(_data.type == "calendar" || _data.type == "news"){
+		var command = _params.text;
 
-			this.getUrl(_data.url);
-
-		}else if(_data.type == "weather"){
-
-		}else{
-
-		}
-
-	},
-
-	getUrl :function(_url){
-
-		if(command.indexOf("first") > -1 && command.indexOf("news") > -1){
+		if(command.indexOf("first") > -1 && command.indexOf("news") > -1 || command.indexOf("first") > -1 && command.indexOf("use") > -1){
 			this.state.selectedUrl = this.state.newsFeed[0].url;
-		}else if(command.indexOf("second") > -1 && command.indexOf("news") > -1){
+		}else if(command.indexOf("second") > -1 && command.indexOf("news") > -1 || command.indexOf("second") > -1 && command.indexOf("use") > -1 || command.indexOf("II") > -1){
 			this.state.selectedUrl = this.state.newsFeed[1].url;
-		}else if(command.indexOf("third") > -1 && command.indexOf("news") > -1){
+		}else if(command.indexOf("third") > -1 && command.indexOf("news") > -1 || command.indexOf("third") > -1 && command.indexOf("use") > -1){
 			this.state.selectedUrl = this.state.newsFeed[2].url;
-		}else if(command.indexOf("fourth") > -1 && command.indexOf("news") > -1){
+		}else if(command.indexOf("fourth") > -1 && command.indexOf("news") > -1 || command.indexOf("fourth") > -1 && command.indexOf("use") > -1){
 			this.state.selectedUrl = this.state.newsFeed[3].url;
-		}else if(command.indexOf("fifth") > -1 && command.indexOf("news") > -1){
+		}else if(command.indexOf("fifth") > -1 && command.indexOf("news") > -1 || command.indexOf("fifth") > -1 && command.indexOf("use") > -1){
 			this.state.selectedUrl = this.state.newsFeed[4].url;
 		}else if(command.indexOf("show") > -1 && command.indexOf("calendar") > -1){
-			this.state.selectedUrl = _url;
+			this.state.selectedUrl = _params.url;
+		}else if(command.indexOf("close") > -1){
+			this.closeModal();
 		}else{
 			//dont understand
-			this.closeModal();
+			//this.closeModal();
 			return;
 		}
 
-		this.openModal();
+		this.openModal(this.state.selectedUrl);
 	},
 
 	getSchedule : function(){
@@ -156,11 +160,13 @@ module.exports = React.createClass({
 	},
 
 	openModal : function(_url){
-		this.setState({isShow: true});
+		var w = 700;
+		var h = 700;
+		Popup.show(_url, "Popup window", w, h);
 	},
 
 	closeModal : function(){
-		this.setState({isShow: false});
+		Popup.close();
 	},
 
 	render () {
@@ -253,13 +259,7 @@ module.exports = React.createClass({
 					<div className="" style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.clock}} onClick={() => this.getWeather() }><i className="fa fa-fw fa-microphone" style={{color: Defaults.ui.color.white}}></i></div>
 				</div>
 
-				<div>
-					{ this.state.isShow ?
-          <Popout title='Broswer' onClosing={this.closeModal} url={this.state.selectedUrl}>
-            <div id="web" style={{width:'100%', height:'100%'}}>
-						</div>
-          </Popout> : false }
-				</div>
+
 
 
 			</div>

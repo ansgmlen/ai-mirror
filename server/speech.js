@@ -19,13 +19,13 @@ const speech = Speech({
 var io = require('socket.io');
 var socketClient = {};
 exports.startSocket = function(client) {
-  console.log("start socket.io in speech.js");
-  socketClient = client;
-  exports.startListen();
+    console.log("start socket.io in speech.js");
+    socketClient = client;
+    exports.startListen();
 };
 
 // Start recording and send the microphone input to the Speech API
-exports.startListen = function (req, res) {
+exports.startListen = function(req, res) {
 
     // Create a recognize stream : https://cloud.google.com/speech/docs/streaming-recognize
     const recognizeStream = speech.createRecognizeStream({
@@ -34,99 +34,109 @@ exports.startListen = function (req, res) {
             sampleRate: 16000
         }
     }).on('error', console.error).on('data', (data) => {
-            console.log(data.results);
-            //process.stdout.write(data.results);
+        //process.stdout.write(data.results);
 
-            if (data.results.length > 1) {
+        if (data.results.length > 1) {
 
-                getMessage({
-                    message: data.results
-                }).then((response) => {
+            getMessage({
+                message: data.results
+            }).then((response) => {
 
-                  console.log("getMessage: ",response);
+                console.log("getMessage: ", response);
 
-                  var json = JSON.parse(response);
+                var json = JSON.parse(response);
 
+                try {
 
+                    if (json._text.indexOf("close") > -1 || json._text.indexOf("clothes") > -1)  {
+                        socketClient.emit('receiveCommand', {
+                            type: 'closeModal',
+                            action: 'closeModal',
+                            url: '',
+                            text: json._text,
+                            answer: "Okay"
+                        });
+                    }else if (json._text.indexOf("news") > -1 || json._text.indexOf("use") > -1) {
 
-                  try{
+                      socketClient.emit('receiveCommand', {
+                          type: 'news',
+                          action: 'openUrl',
+                          url: '',
+                          text: json._text,
+                          answer: "Sure"
+                      });
 
-                    if(json.entities && json.entities.Intent){
+                    }else if(json.entities && json.entities.Intent) {
+
+                    }else if (json.entities && json.entities.calendar) {
+                        //speak show calendar
+                        socketClient.emit('receiveCommand', {
+                            type: 'calendar',
+                            action: 'openUrl',
+                            url: 'https://calendar.google.com/calendar/embed?src=heedoo21c%40gmail.com&ctz=America/New_York',
+                            text: json._text,
+                            answer: "Sure here is your calendar"
+                        });
+                    }else{
 
                     }
 
-                    if(json.entities && json.entities.calendar){
-                      //speak show calendar
-                      socketClient.emit('receiveCommand', {type:'calendar', action:'openUrl', url : 'https://calendar.google.com/calendar/embed?src=heedoo21c%40gmail.com&ctz=America/New_York', text : "Sure here is your calendar" });
-                    }
-                    /*
-                    if(res.entities && res.entities.Intent){
-                      var val = res.entities.Intent[0].value;
-                      if(val == 'greeting'){
-                        //TODO: do greeting
-                        //make response audio file here and return obj(res) -> client needs to action according to obj
-                      }
-                    }
-                    */
-
-                    //1. show me calendar?
                     //2. display this week schedule
 
-                  } catch(_error){
-                    console.log(_error);
-                  }
-
-                  //res.send(response);
-                  exports.startListen();
-                  //return getEntity({type : "Weather-Type"});
-
-                }).catch((err)=>{
-                  console.log(err);
-                });
-
-                //stop and start again when process circle is done
-                exports.stopListen();
-
-
-/*
-                if (data.results == "ok mirror") {
-                    getFile("Yes, what can I do for you?");
-                } else if (data.results.indexOf("how") && data.results.indexOf("are") && data.results.indexOf("you")) {
-                    getFile("I am fine. Thank you!");
-                } else if (data.results.indexOf("what") > -1 && data.results.indexOf("weather") > -1 && data.results.indexOf("today") > -1 || data.results.indexOf("what") > -1 && data.results.indexOf("weather") > -1 && data.results.indexOf("current") > -1) {
-                    getFile("Today weather is sunny");
-                } else if (data.results.indexOf("what") > -1 && data.results.indexOf("weather") > -1 && data.results.indexOf("tomorrow") > -1) {
-                    getFile("tomorrow weather is cloudy");
-                }
-                //TODO : 3days/7days forecast
-                //how do i look
-                //map => direction => traffic
-                //news
-                else {
-                    getFile("Sorry, I don't understand");
+                } catch (_error) {
+                  console.log(_error);
                 }
 
-                exports.stopListen();
-                */
+                exports.startListen();
 
-            }else{
-              console.log("silence");
-            }
+            }).catch((err) => {
+                console.log(err);
+            });
+
+            //stop and start again when process circle is done
+            exports.stopListen();
 
 
-        });
+            /*
+                            if (data.results == "ok mirror") {
+                                getFile("Yes, what can I do for you?");
+                            } else if (data.results.indexOf("how") && data.results.indexOf("are") && data.results.indexOf("you")) {
+                                getFile("I am fine. Thank you!");
+                            } else if (data.results.indexOf("what") > -1 && data.results.indexOf("weather") > -1 && data.results.indexOf("today") > -1 || data.results.indexOf("what") > -1 && data.results.indexOf("weather") > -1 && data.results.indexOf("current") > -1) {
+                                getFile("Today weather is sunny");
+                            } else if (data.results.indexOf("what") > -1 && data.results.indexOf("weather") > -1 && data.results.indexOf("tomorrow") > -1) {
+                                getFile("tomorrow weather is cloudy");
+                            }
+                            //TODO : 3days/7days forecast
+                            //how do i look
+                            //map => direction => traffic
+                            //news
+                            else {
+                                getFile("Sorry, I don't understand");
+                            }
+
+                            exports.stopListen();
+                            */
+
+        } else {
+            console.log("silence");
+        }
+
+
+    });
 
     record.start({
         sampleRate: 16000,
         threshold: 0
     }).pipe(recognizeStream);
+
 }
 
 
 /* stop recording */
 exports.stopListen = function(req, res) {
-  console.log("stop listen");
-  record.stop();
+    console.log("stop listen");
+    record.stop();
     //res.end();
 }
 
