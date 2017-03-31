@@ -44,10 +44,11 @@ module.exports = React.createClass({
 
 	},
 
+	/* handle voice command */
 	handleCommand: function(_data){
 
 		if(_data.type == "calendar" || _data.type == "news"){
-			this.getUrl(_data);
+			this.getUrl(_data.url, _data.text);
 		}else if(_data.type == "weather"){
 
 		}else if(_data.type == "closeModal"){
@@ -119,30 +120,8 @@ module.exports = React.createClass({
 		});
 	},
 
-	getUrl :function(_params){
-
-		var command = _params.text;
-
-		if(command.indexOf("first") > -1 && command.indexOf("news") > -1 || command.indexOf("first") > -1 && command.indexOf("use") > -1){
-			this.state.selectedUrl = this.state.newsFeed[0].url;
-		}else if(command.indexOf("second") > -1 && command.indexOf("news") > -1 || command.indexOf("second") > -1 && command.indexOf("use") > -1 || command.indexOf("II") > -1){
-			this.state.selectedUrl = this.state.newsFeed[1].url;
-		}else if(command.indexOf("third") > -1 && command.indexOf("news") > -1 || command.indexOf("third") > -1 && command.indexOf("use") > -1){
-			this.state.selectedUrl = this.state.newsFeed[2].url;
-		}else if(command.indexOf("fourth") > -1 && command.indexOf("news") > -1 || command.indexOf("fourth") > -1 && command.indexOf("use") > -1){
-			this.state.selectedUrl = this.state.newsFeed[3].url;
-		}else if(command.indexOf("fifth") > -1 && command.indexOf("news") > -1 || command.indexOf("fifth") > -1 && command.indexOf("use") > -1){
-			this.state.selectedUrl = this.state.newsFeed[4].url;
-		}else if(command.indexOf("show") > -1 && command.indexOf("calendar") > -1){
-			this.state.selectedUrl = _params.url;
-		}else if(command.indexOf("close") > -1){
-			this.closeModal();
-		}else{
-			//dont understand
-			//this.closeModal();
-			return;
-		}
-
+	getUrl :function(_url, command){
+		this.state.selectedUrl = _url;
 		this.openModal(this.state.selectedUrl);
 	},
 

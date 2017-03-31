@@ -17,20 +17,131 @@ const speech = Speech({
 });
 var io = require('socket.io');
 var socketClient = {};
+var News = require("./news");
 
 exports.startSocket = function(client) {
     console.log("start socket.io in speech.js");
     socketClient = client;
-    exports.startListen();
-
-    // var file = fs.createWriteStream('public/audio/test.wav', {
-    //     encoding: 'binary'
-    // })
-    // record.start().pipe(file, function(data){
-    //   console.log(data);
-    // })
+    startRecord();
+    //exports.startListen();
 };
 
+/** Start recording using lpcm16 module with wit.ai */
+function startRecord() {
+    record.start().pipe(request.post({
+            'url': 'https://api.wit.ai/speech?v=20160526',
+            'headers': {
+                'Accept': 'application/vnd.wit.20160202+json',
+                'Authorization': 'Bearer ' + config.CONFIG.currentEnv.witToken,
+                'Content-Type': 'audio/wav'
+            }
+        }, function(err, res, body) {
+            console.log("Body: ", body); //parseResult
+            response(JSON.parse(body));
+        })
+    );
+}
+
+/**
+* response
+* @param - params{object}: speech to text object from wit.ai
+*/
+function response(params) {
+
+  var emitObj = {}; //when socket is emitting, it sends emitObj data
+
+  try {
+
+      if (params._text.indexOf("close") > -1) {
+        emitObj = {
+            type: 'closeModal',
+            action: 'closeModal',
+            url: '',
+            text: json._text,
+            answer: "Okay"
+        };
+        socketClient.emit('receiveCommand', emitObj);
+      }
+      else if(params._text.indexOf("how") > -1&&params._text.indexOf("i") > -1&&params._text.indexOf("look") > -1){
+        emitObj = {
+            type: 'appearence',
+            action: '',
+            url: '',
+            text: json._text,
+            answer: "You look awesome!"
+        };
+        socketClient.emit('receiveCommand', emitObj);
+      }
+      else if (params.entities && params.entities.Intent) {
+
+          if (params.entities.Intent[0].value == "news") {
+
+            var newsObj = News.getJSON();
+
+            emitObj = {
+                type: 'news',
+                action: 'openUrl',
+                url: newsObj.articles[0],
+                text: params._text,
+                answer: "Sure"
+            };
+
+            if(params._text.indexOf("first") > -1){
+              emitObj.url = newsObj.articles[0];
+            }else if(params._text.indexOf("second") > -1){
+              emitObj.url = newsObj.articles[1];
+            }else if(params._text.indexOf("third") > -1){
+              emitObj.url = newsObj.articles[2];
+            }else if(params._text.indexOf("fouth") > -1){
+              emitObj.url = newsObj.articles[3];
+            }else if(params._text.indexOf("fifth") > -1){
+              emitObj.url = newsObj.articles[4];
+            }
+
+            socketClient.emit('receiveCommand', emitObj);
+          }
+
+      }
+      else if (params.entities && params.entities.calendar) {
+        emitObj = {
+            type: 'calendar',
+            action: 'openUrl',
+            url: 'https://calendar.google.com/calendar/embed?src=heedoo21c%40gmail.com&ctz=America/New_York',
+            text: json._text,
+            answer: "Sure here is your calendar"
+        };
+        socketClient.emit('receiveCommand', emitObj);
+      } else {
+
+      }
+
+      //speak here and if ai doesn't understand, record voice again
+      if(emitObj && emitObj.answer){
+        getFile(emitObj.answer);
+      }else{
+        startRecord();
+      }
+
+
+
+  } catch (caught) {
+      console.log("caught: ", caught);
+  }
+
+  //startRecord();
+
+}
+
+
+/* stop recording */
+exports.stopListen = function(req, res) {
+    console.log("stop listen");
+    record.stop();
+    //res.end();
+}
+
+
+/*
 // Start recording and send the microphone input to the Speech API
 exports.startListen = function(req, res) {
 
@@ -104,27 +215,6 @@ exports.startListen = function(req, res) {
             exports.stopListen();
 
 
-            /*
-                            if (data.results == "ok mirror") {
-                                getFile("Yes, what can I do for you?");
-                            } else if (data.results.indexOf("how") && data.results.indexOf("are") && data.results.indexOf("you")) {
-                                getFile("I am fine. Thank you!");
-                            } else if (data.results.indexOf("what") > -1 && data.results.indexOf("weather") > -1 && data.results.indexOf("today") > -1 || data.results.indexOf("what") > -1 && data.results.indexOf("weather") > -1 && data.results.indexOf("current") > -1) {
-                                getFile("Today weather is sunny");
-                            } else if (data.results.indexOf("what") > -1 && data.results.indexOf("weather") > -1 && data.results.indexOf("tomorrow") > -1) {
-                                getFile("tomorrow weather is cloudy");
-                            }
-                            //TODO : 3days/7days forecast
-                            //how do i look
-                            //map => direction => traffic
-                            //news
-                            else {
-                                getFile("Sorry, I don't understand");
-                            }
-
-                            exports.stopListen();
-                            */
-
         } else {
             console.log("silence");
         }
@@ -138,14 +228,8 @@ exports.startListen = function(req, res) {
     }).pipe(recognizeStream);
 
 }
+*/
 
-
-/* stop recording */
-exports.stopListen = function(req, res) {
-    console.log("stop listen");
-    record.stop();
-    //res.end();
-}
 
 
 
@@ -171,7 +255,8 @@ function getFile(text) {
                 if (err) {
                     console.log("err: " + err);
                 } else {
-                    startListen();
+                    //startListen();
+                    startRecord();
                 }
             })
 
@@ -235,7 +320,6 @@ function getMessage(params) {
     return new Promise(function(resolve, reject) {
 
         var url = 'https://api.wit.ai/message?v=20160526&q=' + encodeURIComponent(params.message);
-
 
         request.get({
             'url': url,

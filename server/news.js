@@ -1,6 +1,7 @@
 var request = require('request');
 var config = require('./config');
 var newsapiKey = config.CONFIG.currentEnv.newsapi;
+var json = {};
 /**
  * get news from google news feed
  * @param: news_country_code
@@ -13,7 +14,7 @@ exports.getNews = function(req, res) {
         },
     }, function(err, response, body) {
         if (!err && response.statusCode == 200) {
-            var json = JSON.parse(response.body);
+            json = JSON.parse(response.body);
             res.send(json);
         } else {
             res.send(err);
@@ -21,3 +22,8 @@ exports.getNews = function(req, res) {
     });
 
 };
+
+/* just return current news data */
+exports.getJSON = function(){
+  return json;
+}
