@@ -15,13 +15,20 @@ const speech = Speech({
     projectId: config.CONFIG.currentEnv.googleProjectId,
     keyFilename: 'public/key/smart-mirror-437114bd5f01.json' //'public/key/smart-mirror-3afaae1972f9.json'
 });
-
 var io = require('socket.io');
 var socketClient = {};
+
 exports.startSocket = function(client) {
     console.log("start socket.io in speech.js");
     socketClient = client;
     exports.startListen();
+
+    // var file = fs.createWriteStream('public/audio/test.wav', {
+    //     encoding: 'binary'
+    // })
+    // record.start().pipe(file, function(data){
+    //   console.log(data);
+    // })
 };
 
 // Start recording and send the microphone input to the Speech API
@@ -48,7 +55,7 @@ exports.startListen = function(req, res) {
 
                 try {
 
-                    if (json._text.indexOf("close") > -1 || json._text.indexOf("clothes") > -1)  {
+                    if (json._text.indexOf("close") > -1 || json._text.indexOf("clothes") > -1) {
                         socketClient.emit('receiveCommand', {
                             type: 'closeModal',
                             action: 'closeModal',
@@ -56,19 +63,19 @@ exports.startListen = function(req, res) {
                             text: json._text,
                             answer: "Okay"
                         });
-                    }else if (json._text.indexOf("news") > -1 || json._text.indexOf("use") > -1) {
+                    } else if (json.entities && json.entities.Intent) {
 
-                      socketClient.emit('receiveCommand', {
-                          type: 'news',
-                          action: 'openUrl',
-                          url: '',
-                          text: json._text,
-                          answer: "Sure"
-                      });
+                        if (json.entities.Intent[0].value == "news") {
+                            socketClient.emit('receiveCommand', {
+                                type: 'news',
+                                action: 'openUrl',
+                                url: '',
+                                text: json._text,
+                                answer: "Sure"
+                            });
+                        }
 
-                    }else if(json.entities && json.entities.Intent) {
-
-                    }else if (json.entities && json.entities.calendar) {
+                    } else if (json.entities && json.entities.calendar) {
                         //speak show calendar
                         socketClient.emit('receiveCommand', {
                             type: 'calendar',
@@ -77,14 +84,14 @@ exports.startListen = function(req, res) {
                             text: json._text,
                             answer: "Sure here is your calendar"
                         });
-                    }else{
+                    } else {
 
                     }
 
                     //2. display this week schedule
 
                 } catch (_error) {
-                  console.log(_error);
+                    console.log(_error);
                 }
 
                 exports.startListen();

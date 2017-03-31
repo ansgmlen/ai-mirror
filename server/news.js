@@ -7,7 +7,7 @@ var newsapiKey = config.CONFIG.currentEnv.newsapi;
  */
 exports.getNews = function(req, res) {
     request.get({
-        url: "https://newsapi.org/v1/articles?source=cnn&apiKey=" + newsapiKey,
+        url: "https://newsapi.org/v1/articles?source=google-news&apiKey=" + newsapiKey,
         headers: {
             'Content-Type': 'application/json',
         },
