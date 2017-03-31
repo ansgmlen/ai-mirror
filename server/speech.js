@@ -369,15 +369,28 @@ exports.witSpeechToText = function(req, res) {
     })
 
     record.start().pipe(request.post({
-        'url': 'https://api.wit.ai/speech?client=chromium&lang=en-us&output=json',
-        'headers': {
-            'Accept': 'application/vnd.wit.20160202+json',
-            'Authorization': 'Bearer ' + config.CONFIG.currentEnv.witToken,
-            'Content-Type': 'audio/wav'
-        }
-    }, function(err, res, body) {
-        console.log("Body: ", body); //parseResult
-    }));
+              'url': 'https://api.wit.ai/speech?v=20160526',
+              'headers': {
+                  'Accept': 'application/vnd.wit.20160202+json',
+                  'Authorization': 'Bearer ' + config.CONFIG.currentEnv.witToken,
+                  'Content-Type': 'audio/wav'
+              }
+          }, function(err, res, body) {
+              console.log("Body: ", JSON.parse(body)); //parseResult
+          }));
+
+          /* This api is depricated
+          record.start().pipe(request.post({
+              'url': 'https://api.wit.ai/speech?client=chromium&lang=en-us&output=json',
+              'headers': {
+                  'Accept': 'application/vnd.wit.20160202+json',
+                  'Authorization': 'Bearer ' + config.CONFIG.currentEnv.witToken,
+                  'Content-Type': 'audio/wav'
+              }
+          }, function(err, res, body) {
+              console.log("Body: ", body); //parseResult
+          }));
+          */
 
 }
 
