@@ -28,7 +28,8 @@ module.exports = React.createClass({
 			schedules : [],
 			isShow : false,
 			selectedUrl : '',
-			currentCommand : 'a'
+			currentCommand : '',
+			answer : ''
 		};
 	},
 	componentDidMount: function() {
@@ -39,6 +40,14 @@ module.exports = React.createClass({
 
 		socket.on('receiveCommand', function(data) {
 				console.log("receiveCommand: ", data);
+				self.setState({
+					answer : data.answer,
+					isShow: true
+				}, function(){
+					setTimeout(function(){
+						self.setState({isShow:false});
+					}, 5000);
+				});
 				self.handleCommand(data);
 		});
 
@@ -54,7 +63,7 @@ module.exports = React.createClass({
 		}else if(_data.type == "closeModal"){
 			this.closeModal();
 		}else{
-			this.closeModal();
+			//this.closeModal();
 		}
 
 	},
@@ -186,6 +195,19 @@ module.exports = React.createClass({
 			);
 		});
 
+		var styles = {
+			answer:{
+				visibility: this.state.isShow ? 'visible' : 'hidden',
+				display: 'flex',
+				justifyContent: 'center',
+				color:'#fff',
+				fontSize:'45px',
+				marginTop:'35%'
+			}
+		}
+
+
+		//display: 'none'
 
 
 		return (
@@ -214,7 +236,11 @@ module.exports = React.createClass({
 					</div>
 				</div>
 
-				<div style={{overflow:'hidden', marginTop:'75%', color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.xLarge}}>
+				<div style={styles.answer} >
+					 <div >{this.state.answer}</div>
+				</div>
+
+				<div style={{overflow:'hidden', marginTop:'35%', color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.xLarge}}>
 					<div style={{float:'left', width: '45%'}}>
 						<table>
 							<tbody>
@@ -237,8 +263,6 @@ module.exports = React.createClass({
 				<div style={{marginTop:'15px', display: 'flex', justifyContent: 'center'}}>
 					<div className="" style={{color: Defaults.ui.color.white, fontSize:Defaults.ui.fontSize.clock}} onClick={() => this.getWeather() }><i className="fa fa-fw fa-microphone" style={{color: Defaults.ui.color.white}}></i></div>
 				</div>
-
-
 
 
 			</div>

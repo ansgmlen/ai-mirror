@@ -28,6 +28,7 @@ exports.startSocket = function(client) {
 
 /** Start recording using lpcm16 module with wit.ai */
 function startRecord() {
+  console.log("start listening");
     record.start().pipe(request.post({
             'url': 'https://api.wit.ai/speech?v=20160526',
             'headers': {
@@ -36,7 +37,7 @@ function startRecord() {
                 'Content-Type': 'audio/wav'
             }
         }, function(err, res, body) {
-            console.log("Body: ", body); //parseResult
+            console.log(body); //parseResult
             response(JSON.parse(body));
         })
     );
@@ -57,8 +58,18 @@ function response(params) {
             type: 'closeModal',
             action: 'closeModal',
             url: '',
-            text: json._text,
+            text: params._text,
             answer: "Okay"
+        };
+        socketClient.emit('receiveCommand', emitObj);
+      }
+      else if(params._text.indexOf("ok") > -1 && params._text.indexOf("emily") > -1){
+        emitObj = {
+            type: 'appearence',
+            action: '',
+            url: '',
+            text: params._text,
+            answer: "Yes, Heedoo what can i do for you"
         };
         socketClient.emit('receiveCommand', emitObj);
       }
@@ -67,7 +78,7 @@ function response(params) {
             type: 'appearence',
             action: '',
             url: '',
-            text: json._text,
+            text: params._text,
             answer: "You look awesome!"
         };
         socketClient.emit('receiveCommand', emitObj);
@@ -81,21 +92,21 @@ function response(params) {
             emitObj = {
                 type: 'news',
                 action: 'openUrl',
-                url: newsObj.articles[0],
+                url: newsObj.articles[0].url,
                 text: params._text,
-                answer: "Sure"
+                answer: "Sure, here is today news"
             };
 
             if(params._text.indexOf("first") > -1){
-              emitObj.url = newsObj.articles[0];
+              emitObj.url = newsObj.articles[0].url;
             }else if(params._text.indexOf("second") > -1){
-              emitObj.url = newsObj.articles[1];
+              emitObj.url = newsObj.articles[1].url;
             }else if(params._text.indexOf("third") > -1){
-              emitObj.url = newsObj.articles[2];
+              emitObj.url = newsObj.articles[2].url;
             }else if(params._text.indexOf("fouth") > -1){
-              emitObj.url = newsObj.articles[3];
+              emitObj.url = newsObj.articles[3].url;
             }else if(params._text.indexOf("fifth") > -1){
-              emitObj.url = newsObj.articles[4];
+              emitObj.url = newsObj.articles[4].url;
             }
 
             socketClient.emit('receiveCommand', emitObj);
@@ -107,19 +118,21 @@ function response(params) {
             type: 'calendar',
             action: 'openUrl',
             url: 'https://calendar.google.com/calendar/embed?src=heedoo21c%40gmail.com&ctz=America/New_York',
-            text: json._text,
+            text: params._text,
             answer: "Sure here is your calendar"
         };
         socketClient.emit('receiveCommand', emitObj);
       } else {
 
+        startRecord();
+        
       }
 
       //speak here and if ai doesn't understand, record voice again
       if(emitObj && emitObj.answer){
         getFile(emitObj.answer);
       }else{
-        startRecord();
+      //
       }
 
 

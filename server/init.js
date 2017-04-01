@@ -39,7 +39,7 @@ var weather = require('./weather');
 var news = require('./news');
 var calendar = require('./calendar');
 
-app.get('/startListen', speech.startListen);
+//app.get('/startListen', speech.startRecord);
 app.get('/stopListen', speech.stopListen);
 app.get('/getWeather', weather.getWeather);
 app.get('/getNews', news.getNews);
