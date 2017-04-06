@@ -123,9 +123,9 @@ function response(params) {
         };
         socketClient.emit('receiveCommand', emitObj);
       } else {
-
+        console.log("nothing else");
         startRecord();
-        
+
       }
 
       //speak here and if ai doesn't understand, record voice again
