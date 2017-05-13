@@ -28,8 +28,9 @@ module.exports = {
             small: '12px',
             xsmall: '10px',
             xLarge : '20px',
-            clock : '48px',
-            temperature : '50px'
+            xxLarge: '30px',
+            clock : '68px',
+            temperature : '70px'
         },
         fontFamily : {
           theme : 'Helvetica Neue'//"Helvetica"//,"Helvetica"//'San Francisco'//'Helvetica Neue'//'BlinkMacSystemFont'

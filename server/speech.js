@@ -13,7 +13,7 @@ var player = require('play-sound')()
 const Speech = require('@google-cloud/speech');
 const speech = Speech({
     projectId: config.CONFIG.currentEnv.googleProjectId,
-    keyFilename: 'public/key/smart-mirror-437114bd5f01.json' //'public/key/smart-mirror-3afaae1972f9.json'
+    keyFilename: 'public/key/smart-mirror-3afaae1972f9.json' //'public/key/smart-mirror-437114bd5f01.json'
 });
 var io = require('socket.io');
 var socketClient = {};
@@ -22,7 +22,7 @@ var News = require("./news");
 exports.startSocket = function(client) {
     console.log("start socket.io in speech.js");
     socketClient = client;
-    startRecord();
+    //startRecord();
     //exports.startListen();
 };
 

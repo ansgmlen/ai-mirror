@@ -23,8 +23,8 @@ var App = React.createClass({
 	},
 	render: function() {
 		return (
-			<div className="page-wrapper">
-				<div className="page-body" style={{backgroundColor:Defaults.ui.color.black}}>
+			<div className="page-wrapper" style={{height:"100%"}}>
+				<div className="page-body" style={{height:"100%", backgroundColor:Defaults.ui.color.black}}>
 				  {this.props.children}
 				</div>
 			</div>

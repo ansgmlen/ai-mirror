@@ -1,3 +1,6 @@
+raspberry pi: how to open config file
+sudo nano /boot/config.txt
+
 react-express-starter
 =====================
 

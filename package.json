@@ -13,6 +13,7 @@
   "dependencies": {
     "@google-cloud/speech": "^0.7.0",
     "babelify": "^6.0.1",
+    "browser-resolve": "^1.11.2",
     "browserify-middleware": "^7.1.0",
     "bufferutil": "^3.0.0",
     "classnames": "~1.2.0",
@@ -47,6 +48,7 @@
   ],
   "devDependencies": {
     "babel-eslint": "^2.0.2",
+    "browserify": "^14.3.0",
     "eslint": "^0.18.0",
     "eslint-plugin-react": "^2.0.2",
     "nodemon": "^1.11.0"
